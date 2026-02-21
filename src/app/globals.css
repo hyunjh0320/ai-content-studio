@@ -1,0 +1,40 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --bg: #080b14;
+  --surface: #0f1523;
+  --surface-2: #151d30;
+  --border: #1e2d4a;
+  --accent: #3b82f6;
+  --accent-2: #8b5cf6;
+  --success: #22c55e;
+  --warning: #f59e0b;
+  --danger: #ef4444;
+  --text: #e2e8f0;
+  --text-muted: #64748b;
+}
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: system-ui, -apple-system, sans-serif;
+}
+
+textarea, input, select {
+  background: var(--surface-2);
+  border-color: var(--border);
+  color: var(--text);
+}
+
+::-webkit-scrollbar { width: 5px; height: 5px; }
+::-webkit-scrollbar-track { background: var(--surface); }
+::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
+
+.streaming-cursor::after {
+  content: '▋';
+  animation: blink 0.7s infinite;
+  color: var(--accent);
+}
+@keyframes blink { 0%,100% { opacity:1 } 50% { opacity:0 } }
