@@ -14,6 +14,16 @@
   --danger: #ef4444;
   --text: #e2e8f0;
   --text-muted: #64748b;
+  /* semi-transparent variants (Tailwind /opacity doesn't work with CSS vars) */
+  --accent-10: rgba(59, 130, 246, 0.1);
+  --accent-20: rgba(59, 130, 246, 0.2);
+  --accent-2-10: rgba(139, 92, 246, 0.1);
+  --accent-2-20: rgba(139, 92, 246, 0.2);
+  --accent-2-40: rgba(139, 92, 246, 0.4);
+  --success-10: rgba(34, 197, 94, 0.1);
+  --success-30: rgba(34, 197, 94, 0.3);
+  --success-40: rgba(34, 197, 94, 0.4);
+  --danger-30: rgba(239, 68, 68, 0.3);
 }
 
 body {

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useCallback, useRef } from "react";
+import { useState, useCallback } from "react";
 import type {
   TabId, ApiKeys, PlanningInput, CharacterInput,
   ContentPlan, Scene, ImageProvider,
@@ -23,7 +23,6 @@ const TABS: { id: TabId; label: string; icon: string }[] = [
   { id: "export",   label: "내보내기", icon: "⬇" },
 ];
 
-const DEFAULT_KEYS: ApiKeys = { openai: "", replicate: "", fal: "", elevenlabs: "" };
 const DEFAULT_CHARACTER: CharacterInput = { name: "", role: "주인공", description: "", voiceType: "" };
 
 /* ================================================================== */
@@ -131,8 +130,15 @@ export default function Page() {
   const [plan, setPlan] = useState<ContentPlan | null>(null);
 
   /* --- Image state ------------------------------------------------- */
-  const [imgProvider, setImgProvider] = useState<ImageProvider>("replicate");
+  const [imgProvider, setImgProviderRaw] = useState<ImageProvider>("replicate");
   const [imgModel, setImgModel] = useState("flux-kontext-pro");
+  const IMG_DEFAULTS: Record<ImageProvider, string> = {
+    replicate: "flux-kontext-pro", fal: "fal-flux-kontext", openai: "gpt-image-1",
+  };
+  function setImgProvider(p: ImageProvider) {
+    setImgProviderRaw(p);
+    setImgModel(IMG_DEFAULTS[p]);
+  }
   const [imgStatus, setImgStatus] = useState<Record<string, string>>({});
   const [imgError, setImgError] = useState<Record<string, string>>({});
 
@@ -395,7 +401,7 @@ export default function Page() {
             <span>{t.icon}</span>
             <span>{t.label}</span>
             {t.id === "scenario" && plan && (
-              <span className="ml-1 text-xs bg-[var(--accent)]/20 text-[var(--accent)] px-1.5 rounded-full">
+              <span className="ml-1 text-xs bg-[var(--accent-20)] text-[var(--accent)] px-1.5 rounded-full">
                 {plan.scenes.length}
               </span>
             )}
@@ -491,7 +497,7 @@ export default function Page() {
               <div className="flex items-center justify-between mb-4">
                 <h3 className="text-sm font-semibold text-white">캐릭터</h3>
                 <button onClick={addCharacter}
-                  className="text-xs px-3 py-1 rounded border border-[var(--accent)] text-[var(--accent)] hover:bg-[var(--accent)]/10">
+                  className="text-xs px-3 py-1 rounded border border-[var(--accent)] text-[var(--accent)] hover:bg-[var(--accent-10)]">
                   + 캐릭터 추가
                 </button>
               </div>
@@ -571,7 +577,7 @@ export default function Page() {
             </button>
 
             {planError && (
-              <div className="p-3 rounded-lg text-sm text-[var(--danger)] border border-[var(--danger)]/30"
+              <div className="p-3 rounded-lg text-sm text-[var(--danger)] border border-[var(--danger-30)]"
                 style={{ background: "var(--surface)" }}>
                 {planError}
               </div>
@@ -590,7 +596,7 @@ export default function Page() {
             )}
 
             {plan && !streaming && (
-              <div className="p-4 rounded-xl border border-[var(--success)]/30"
+              <div className="p-4 rounded-xl border border-[var(--success-30)]"
                 style={{ background: "var(--surface)" }}>
                 <p className="text-[var(--success)] text-sm font-semibold">
                   ✓ 기획 완성! — {plan.project.title}
@@ -627,7 +633,7 @@ export default function Page() {
                       <h2 className="text-lg font-bold text-white">{plan.project.title}</h2>
                       <p className="text-sm text-[var(--text-muted)] mt-1">{plan.project.logline}</p>
                     </div>
-                    <span className="text-xs px-2 py-1 rounded bg-[var(--accent)]/20 text-[var(--accent)]">
+                    <span className="text-xs px-2 py-1 rounded bg-[var(--accent-20)] text-[var(--accent)]">
                       {plan.project.genre}
                     </span>
                   </div>
@@ -794,7 +800,7 @@ export default function Page() {
                     <div className="flex items-end">
                       <button onClick={generateAllImages}
                         className="w-full py-2 rounded border border-[var(--accent)] text-[var(--accent)]
-                                   text-sm hover:bg-[var(--accent)]/10 transition-colors">
+                                   text-sm hover:bg-[var(--accent-10)] transition-colors">
                         전체 씬 이미지 생성
                       </button>
                     </div>
@@ -1029,7 +1035,7 @@ export default function Page() {
                       <button key={p} onClick={() => setTtsProvider(p)}
                         className={`px-4 py-2 rounded-lg text-sm font-medium border transition-colors
                           ${ttsProvider === p
-                            ? "border-[var(--accent)] text-white bg-[var(--accent)]/20"
+                            ? "border-[var(--accent)] text-white bg-[var(--accent-20)]"
                             : "border-[var(--border)] text-[var(--text-muted)] hover:text-white"}`}>
                         {p === "openai" ? "OpenAI TTS" : "ElevenLabs"}
                       </button>
@@ -1077,7 +1083,7 @@ export default function Page() {
                           <button onClick={() => generateNarration(scene)}
                             disabled={narStatus[scene.id] === "running"}
                             className="px-3 py-1 rounded text-xs border border-[var(--accent-2)]
-                                       text-[var(--accent-2)] hover:bg-[var(--accent-2)]/10
+                                       text-[var(--accent-2)] hover:bg-[var(--accent-2-10)]
                                        disabled:opacity-50">
                             {narStatus[scene.id] === "running" ? "생성 중..." : "나레이션 생성"}
                           </button>
@@ -1194,16 +1200,16 @@ export default function Page() {
                           {scene.generatedImageUrl ? (
                             <a href={scene.generatedImageUrl} download={`scene_${scene.order}_image.png`}
                               target="_blank" rel="noreferrer"
-                              className="text-xs px-2 py-0.5 rounded border border-[var(--success)]/40
-                                         text-[var(--success)] hover:bg-[var(--success)]/10">
+                              className="text-xs px-2 py-0.5 rounded border border-[var(--success-40)]
+                                         text-[var(--success)] hover:bg-[var(--success-10)]">
                               이미지
                             </a>
                           ) : <span className="text-xs text-[var(--text-muted)] px-2">이미지 없음</span>}
                           {scene.generatedVideoUrl ? (
                             <a href={scene.generatedVideoUrl} download={`scene_${scene.order}_video.mp4`}
                               target="_blank" rel="noreferrer"
-                              className="text-xs px-2 py-0.5 rounded border border-[var(--accent-2)]/40
-                                         text-[var(--accent-2)] hover:bg-[var(--accent-2)]/10">
+                              className="text-xs px-2 py-0.5 rounded border border-[var(--accent-2-40)]
+                                         text-[var(--accent-2)] hover:bg-[var(--accent-2-10)]">
                               영상
                             </a>
                           ) : <span className="text-xs text-[var(--text-muted)] px-2">영상 없음</span>}
